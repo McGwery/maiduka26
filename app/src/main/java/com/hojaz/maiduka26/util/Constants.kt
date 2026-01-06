@@ -2,7 +2,7 @@ package com.hojaz.maiduka26.util
 
 object Constants {
     // API Configuration
-    const val BASE_URL = "https://api.maiduka.com/api/v1/"
+    const val BASE_URL = "https://maiduka.hojaz.com/api/"
     const val CONNECT_TIMEOUT = 30L
     const val READ_TIMEOUT = 30L
     const val WRITE_TIMEOUT = 30L
