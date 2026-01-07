@@ -18,8 +18,8 @@ import com.hojaz.maiduka26.data.remote.dto.request.UpdateProfileRequest
 import com.hojaz.maiduka26.data.remote.dto.request.UpdateShopRequest
 import com.hojaz.maiduka26.data.remote.dto.request.VerifyOtpRequest
 import com.hojaz.maiduka26.data.remote.dto.response.ApiResponse
-import com.hojaz.maiduka26.data.remote.dto.response.AuthResponse
 import com.hojaz.maiduka26.data.remote.dto.response.CustomerResponse
+import com.hojaz.maiduka26.data.remote.dto.response.LoginResponse
 import com.hojaz.maiduka26.data.remote.dto.response.ProductResponse
 import com.hojaz.maiduka26.data.remote.dto.response.SaleResponse
 import com.hojaz.maiduka26.data.remote.dto.response.ShopResponse
@@ -39,10 +39,10 @@ interface ApiService {
     // ==================== Authentication ====================
 
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<ApiResponse<AuthResponse>>
+    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<ApiResponse<AuthResponse>>
+    suspend fun register(@Body request: RegisterRequest): Response<LoginResponse>
 
     @POST("auth/logout")
     suspend fun logout(): Response<ApiResponse<Unit>>
@@ -54,7 +54,7 @@ interface ApiService {
     suspend fun forgotPassword(@Body request: ForgotPasswordRequest): Response<ApiResponse<Unit>>
 
     @POST("auth/verify-otp")
-    suspend fun verifyOtp(@Body request: VerifyOtpRequest): Response<ApiResponse<Unit>>
+    suspend fun verifyOtp(@Body request: VerifyOtpRequest): Response<LoginResponse>
 
     @POST("auth/send-otp")
     suspend fun sendOtp(@Body request: SendOtpRequest): Response<ApiResponse<Unit>>

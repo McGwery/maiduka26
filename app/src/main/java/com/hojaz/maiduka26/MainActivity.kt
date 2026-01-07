@@ -33,12 +33,24 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val isLoggedIn by preferencesManager.isLoggedIn.collectAsState(initial = false)
+                    val userPrefs by preferencesManager.userPreferencesFlow.collectAsState(
+                        initial = PreferencesManager.UserPreferences()
+                    )
                     val navController = rememberNavController()
+
+                    // Determine start destination based on login and shop state
+                    val startDestination = when {
+                        // Not logged in - go to login
+                        !userPrefs.isLoggedIn -> Screen.Login.route
+                        // Logged in but no active shop - go to create shop
+                        userPrefs.isLoggedIn && userPrefs.activeShopId.isNullOrBlank() -> Screen.CreateShop.route
+                        // Fully logged in with shop - go to dashboard
+                        else -> Screen.Dashboard.route
+                    }
 
                     NavGraph(
                         navController = navController,
-                        startDestination = if (isLoggedIn) Screen.Dashboard.route else Screen.Login.route
+                        startDestination = startDestination
                     )
                 }
             }

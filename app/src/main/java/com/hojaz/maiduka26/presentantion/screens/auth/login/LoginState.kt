@@ -39,6 +39,9 @@ sealed class LoginEffect {
     data object NavigateToHome : LoginEffect()
     data object NavigateToRegister : LoginEffect()
     data object NavigateToForgotPassword : LoginEffect()
+    data object NavigateToCreateShop : LoginEffect()
+    data object NavigateToSubscriptionPayment : LoginEffect()
+    data class NavigateToSubscriptionWarning(val daysRemaining: Int) : LoginEffect()
     data class ShowSnackbar(val message: String) : LoginEffect()
 }
 

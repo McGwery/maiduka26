@@ -51,15 +51,18 @@ data class PaginationMeta(
 data class LoginResponse(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String? = null,
+    @SerializedName("responseTime") val responseTime: Double? = null,
     @SerializedName("data") val data: AuthData?
 )
 
 data class AuthData(
-    @SerializedName("user") val user: UserResponse,
-    @SerializedName("access_token") val accessToken: String,
-    @SerializedName("refresh_token") val refreshToken: String,
-    @SerializedName("token_type") val tokenType: String = "Bearer",
-    @SerializedName("expires_in") val expiresIn: Long
+    @SerializedName("token") val token: TokenData,
+    @SerializedName("user") val user: UserResponse
+)
+
+data class TokenData(
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("tokenType") val tokenType: String = "Bearer"
 )
 
 /**
@@ -72,22 +75,66 @@ typealias AuthResponse = AuthData
  */
 data class TokenResponse(
     @SerializedName("access_token") val accessToken: String,
-    @SerializedName("refresh_token") val refreshToken: String,
+    @SerializedName("refresh_token") val refreshToken: String?,
     @SerializedName("token_type") val tokenType: String = "Bearer",
-    @SerializedName("expires_in") val expiresIn: Long
+    @SerializedName("expires_in") val expiresIn: Long? = null
 )
 
 data class UserResponse(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
-    @SerializedName("email") val email: String?,
+    @SerializedName("email") val email: String? = null,
     @SerializedName("phone") val phone: String?,
-    @SerializedName("email_verified_at") val emailVerifiedAt: String?,
-    @SerializedName("phone_verified_at") val phoneVerifiedAt: String?,
-    @SerializedName("is_phone_login_enabled") val isPhoneLoginEnabled: Boolean = false,
-    @SerializedName("two_factor_enabled") val twoFactorEnabled: Boolean = false,
-    @SerializedName("created_at") val createdAt: String?,
-    @SerializedName("updated_at") val updatedAt: String?
+    @SerializedName("emailVerifiedAt") val emailVerifiedAt: String?,
+    @SerializedName("phoneVerifiedAt") val phoneVerifiedAt: String?,
+    @SerializedName("isPhoneVerified") val isPhoneVerified: Boolean = false,
+    @SerializedName("twoFactorEnabled") val twoFactorEnabled: Boolean = false,
+    @SerializedName("isPhoneLoginEnabled") val isPhoneLoginEnabled: Boolean = false,
+    @SerializedName("activeShop") val activeShop: ActiveShopResponse? = null,
+    @SerializedName("createdAt") val createdAt: String?,
+    @SerializedName("updatedAt") val updatedAt: String?
+)
+
+/**
+ * Active shop from login response.
+ */
+data class ActiveShopResponse(
+    @SerializedName("id") val id: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("businessType") val businessType: BusinessTypeResponse,
+    @SerializedName("phoneNumber") val phoneNumber: String?,
+    @SerializedName("address") val address: String?,
+    @SerializedName("agentCode") val agentCode: String?,
+    @SerializedName("currency") val currency: CurrencyResponse,
+    @SerializedName("imageUrl") val imageUrl: String?,
+    @SerializedName("isActive") val isActive: Boolean = true,
+    @SerializedName("isCurrentSelected") val isCurrentSelected: Boolean = false,
+    @SerializedName("activeSubscription") val activeSubscription: ActiveSubscriptionResponse?,
+    @SerializedName("createdAt") val createdAt: String?,
+    @SerializedName("updatedAt") val updatedAt: String?
+)
+
+data class BusinessTypeResponse(
+    @SerializedName("value") val value: String,
+    @SerializedName("label") val label: String
+)
+
+data class CurrencyResponse(
+    @SerializedName("code") val code: String,
+    @SerializedName("symbol") val symbol: String,
+    @SerializedName("label") val label: String
+)
+
+data class ActiveSubscriptionResponse(
+    @SerializedName("id") val id: String,
+    @SerializedName("plan") val plan: String,
+    @SerializedName("planLabel") val planLabel: String,
+    @SerializedName("type") val type: String,
+    @SerializedName("expiresAt") val expiresAt: String?,
+    @SerializedName("daysRemaining") val daysRemaining: Int,
+    @SerializedName("isActive") val isActive: Boolean = true,
+    @SerializedName("isExpired") val isExpired: Boolean = false,
+    @SerializedName("isExpiringSoon") val isExpiringSoon: Boolean = false
 )
 
 /**

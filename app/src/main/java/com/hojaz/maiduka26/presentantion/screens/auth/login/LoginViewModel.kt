@@ -1,6 +1,8 @@
 package com.hojaz.maiduka26.presentantion.screens.auth.login
 
 import androidx.lifecycle.viewModelScope
+import com.hojaz.maiduka26.data.repository.AuthRepositoryImpl
+import com.hojaz.maiduka26.data.repository.SubscriptionStatus
 import com.hojaz.maiduka26.domain.usecase.auth.LoginUseCase
 import com.hojaz.maiduka26.domain.usecase.auth.LoginWithPhoneUseCase
 import com.hojaz.maiduka26.presentantion.base.BaseViewModel
@@ -14,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val loginWithPhoneUseCase: LoginWithPhoneUseCase
+    private val loginWithPhoneUseCase: LoginWithPhoneUseCase,
+    private val authRepository: AuthRepositoryImpl
 ) : BaseViewModel<LoginState, LoginEvent, LoginEffect>() {
 
     override fun createInitialState(): LoginState = LoginState()
@@ -70,11 +73,52 @@ class LoginViewModel @Inject constructor(
                     }
                     setEffect(LoginEffect.ShowSnackbar(error.message ?: "Login failed"))
                 },
-                ifRight = { user ->
+                ifRight = { _ ->
                     setState { copy(isLoading = false, isLoginSuccessful = true) }
-                    setEffect(LoginEffect.NavigateToHome)
+
+                    // Check subscription status and navigate accordingly
+                    handlePostLoginNavigation()
                 }
             )
+        }
+    }
+
+    /**
+     * Handles navigation after successful login based on subscription status.
+     */
+    private suspend fun handlePostLoginNavigation() {
+        val subscriptionStatus = authRepository.checkActiveShopSubscription()
+
+        when (subscriptionStatus) {
+            SubscriptionStatus.NO_SHOP -> {
+                // User has no shop - redirect to create shop
+                setEffect(LoginEffect.NavigateToCreateShop)
+            }
+            SubscriptionStatus.NO_SUBSCRIPTION -> {
+                // Shop exists but no subscription - redirect to payment
+                setEffect(LoginEffect.NavigateToSubscriptionPayment)
+            }
+            SubscriptionStatus.EXPIRED -> {
+                // Subscription expired - must renew
+                setEffect(LoginEffect.NavigateToSubscriptionPayment)
+            }
+            SubscriptionStatus.EXPIRING_SOON -> {
+                // Subscription expiring soon - show warning but allow access
+                val daysRemaining = authRepository.getSubscriptionDaysRemaining()
+                setEffect(LoginEffect.NavigateToSubscriptionWarning(daysRemaining))
+            }
+            SubscriptionStatus.ACTIVE -> {
+                // All good - navigate to home
+                setEffect(LoginEffect.NavigateToHome)
+            }
+            SubscriptionStatus.INACTIVE -> {
+                // Inactive subscription - redirect to payment
+                setEffect(LoginEffect.NavigateToSubscriptionPayment)
+            }
+            SubscriptionStatus.NO_USER -> {
+                // Shouldn't happen after login, but handle anyway
+                setEffect(LoginEffect.ShowSnackbar("Session error. Please try again."))
+            }
         }
     }
 

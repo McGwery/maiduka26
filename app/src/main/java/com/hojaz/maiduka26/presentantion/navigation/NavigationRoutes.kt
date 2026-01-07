@@ -59,6 +59,10 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object Profile : Screen("profile")
     data object Subscription : Screen("subscription")
+
+    /** Screen for subscription payment/renewal when subscription is expired */
+    data object SubscriptionPayment : Screen("subscription/payment")
+
     data object ShopMembers : Screen("shops/{shopId}/members") {
         fun createRoute(shopId: String) = "shops/$shopId/members"
     }

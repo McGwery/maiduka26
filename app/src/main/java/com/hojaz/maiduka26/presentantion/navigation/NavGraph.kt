@@ -62,7 +62,7 @@ fun NavGraph(
         }
 
         composable(route = Screen.CreateShop.route) {
-            // TODO: CreateShopScreen(navController)
+            com.hojaz.maiduka26.presentantion.screens.shop.create.CreateShopScreen(navController = navController)
         }
 
         composable(
@@ -207,6 +207,10 @@ fun NavGraph(
         // Subscription
         composable(route = Screen.Subscription.route) {
             SubscriptionScreen(navController = navController)
+        }
+
+        composable(route = Screen.SubscriptionPayment.route) {
+            com.hojaz.maiduka26.presentantion.screens.subscription.SubscriptionPaymentScreen(navController = navController)
         }
 
         // Shop Members

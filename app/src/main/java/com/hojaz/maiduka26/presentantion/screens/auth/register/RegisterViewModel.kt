@@ -294,10 +294,14 @@ class RegisterViewModel @Inject constructor(
                         setActiveShopUseCase(result.shop.id).fold(
                             ifLeft = { _ ->
                                 // Shop created but failed to set as active - still proceed
+                                // Complete registration to set isLoggedIn = true
+                                preferencesManager.completeRegistration()
                                 setState { copy(isCreatingShop = false, registrationComplete = true) }
                                 setEffect(RegisterEffect.NavigateToDashboard)
                             },
                             ifRight = {
+                                // Complete registration to set isLoggedIn = true
+                                preferencesManager.completeRegistration()
                                 setState { copy(isCreatingShop = false, registrationComplete = true) }
                                 setEffect(RegisterEffect.ShowSnackbar("Welcome to MaiDuka! Your shop \"${result.shop.name}\" is ready."))
                                 setEffect(RegisterEffect.NavigateToDashboard)

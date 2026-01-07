@@ -51,6 +51,25 @@ fun LoginScreen(
                 is LoginEffect.NavigateToForgotPassword -> {
                     navController.navigate(Screen.ForgotPassword.route)
                 }
+                is LoginEffect.NavigateToCreateShop -> {
+                    navController.navigate(Screen.CreateShop.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+                is LoginEffect.NavigateToSubscriptionPayment -> {
+                    navController.navigate(Screen.SubscriptionPayment.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+                is LoginEffect.NavigateToSubscriptionWarning -> {
+                    // Show warning snackbar then navigate to home
+                    snackbarHostState.showSnackbar(
+                        "Your subscription expires in ${effect.daysRemaining} days. Please renew soon."
+                    )
+                    navController.navigate(Screen.Dashboard.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
                 is LoginEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }

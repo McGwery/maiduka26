@@ -131,6 +131,39 @@ class PreferencesManager @Inject constructor(
         }
     }
 
+    /**
+     * Save partial session during registration flow.
+     * Does NOT set isLoggedIn to true - used when user still needs to complete OTP/shop setup.
+     */
+    suspend fun savePartialSession(
+        userId: String,
+        userName: String,
+        email: String?,
+        phone: String?,
+        accessToken: String
+    ) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.USER_ID] = userId
+            preferences[PreferenceKeys.USER_NAME] = userName
+            email?.let { preferences[PreferenceKeys.USER_EMAIL] = it }
+            phone?.let { preferences[PreferenceKeys.USER_PHONE] = it }
+            preferences[PreferenceKeys.ACCESS_TOKEN] = accessToken
+            preferences[PreferenceKeys.TOKEN_EXPIRY] = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000)
+            // Do NOT set IS_LOGGED_IN = true here
+        }
+    }
+
+    /**
+     * Complete the registration by setting isLoggedIn to true.
+     * Called after OTP verification and shop setup are complete.
+     */
+    suspend fun completeRegistration() {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.IS_LOGGED_IN] = true
+            preferences[PreferenceKeys.IS_FIRST_LAUNCH] = false
+        }
+    }
+
     // Update tokens
     suspend fun updateTokens(accessToken: String, refreshToken: String, tokenExpiry: Long) {
         dataStore.edit { preferences ->
